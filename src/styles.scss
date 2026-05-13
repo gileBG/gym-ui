@@ -1,0 +1,148 @@
+@import 'primeicons/primeicons.css';
+@import 'primeflex/primeflex.css';
+
+/* ============================================
+   GYM UI - Globalni stilovi
+   ============================================ */
+
+:root {
+  --gym-dark-bg: #0d0d0d;
+  --gym-card-bg: #1a1a1a;
+  --gym-gold: #f0a500;
+  --gym-gold-dark: #c8850a;
+  --gym-red: #e63946;
+  --gym-red-dark: #c1121f;
+  --gym-text-primary: #f5f5f5;
+  --gym-text-muted: #a0a0a0;
+  --gym-border: #2a2a2a;
+  --gym-success: #2dc653;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  background-color: var(--gym-dark-bg);
+  color: var(--gym-text-primary);
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Typography */
+h1, h2, h3, h4 {
+  font-family: 'Bebas Neue', cursive;
+  letter-spacing: 1px;
+}
+
+a {
+  text-decoration: none;
+  color: var(--gym-gold);
+  &:hover { color: var(--gym-gold-dark); }
+}
+
+/* PrimeNG overrides - dark gym theme */
+.p-card {
+  background: var(--gym-card-bg) !important;
+  border: 1px solid var(--gym-border) !important;
+  color: var(--gym-text-primary) !important;
+}
+
+.p-datatable {
+  .p-datatable-thead > tr > th {
+    background: #111 !important;
+    color: var(--gym-gold) !important;
+    border-color: var(--gym-border) !important;
+  }
+  .p-datatable-tbody > tr {
+    background: var(--gym-card-bg) !important;
+    color: var(--gym-text-primary) !important;
+    border-color: var(--gym-border) !important;
+    &:hover { background: #222 !important; }
+  }
+}
+
+.p-inputtext, .p-password-input {
+  background: #111 !important;
+  color: var(--gym-text-primary) !important;
+  border-color: var(--gym-border) !important;
+  &:focus { border-color: var(--gym-gold) !important; }
+}
+
+.gym-dialog {
+  .p-dialog {
+    background: var(--gym-card-bg) !important;
+    border: 1px solid var(--gym-border) !important;
+    color: var(--gym-text-primary) !important;
+  }
+
+  .p-dialog-header,
+  .p-dialog-content,
+  .p-dialog-footer {
+    background: var(--gym-card-bg) !important;
+    color: var(--gym-text-primary) !important;
+    border-color: var(--gym-border) !important;
+  }
+
+  .p-dialog-header {
+    border-bottom: 1px solid var(--gym-border) !important;
+  }
+
+  .p-dialog-content {
+    padding-top: 1.25rem !important;
+  }
+
+  .p-floatlabel label {
+    color: var(--gym-text-muted) !important;
+  }
+
+  .p-inputtext,
+  .p-inputtextarea,
+  .p-inputnumber-input {
+    background: #111 !important;
+    color: var(--gym-text-primary) !important;
+    border: 1px solid var(--gym-border) !important;
+  }
+
+  .p-inputtext:enabled:focus,
+  .p-inputtextarea:enabled:focus,
+  .p-inputnumber-input:enabled:focus {
+    border-color: var(--gym-gold) !important;
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--gym-gold) 45%, transparent) !important;
+  }
+}
+
+.btn-gym-primary {
+  background: var(--gym-gold) !important;
+  border-color: var(--gym-gold) !important;
+  color: #000 !important;
+  font-weight: 700 !important;
+  &:hover { background: var(--gym-gold-dark) !important; }
+}
+
+.btn-gym-danger {
+  background: var(--gym-red) !important;
+  border-color: var(--gym-red) !important;
+  color: #fff !important;
+  &:hover { background: var(--gym-red-dark) !important; }
+}
+
+.section-title {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 2.5rem;
+  color: var(--gym-gold);
+  text-align: center;
+  margin-bottom: 2rem;
+  letter-spacing: 3px;
+}
+
+.gym-page {
+  min-height: 100vh;
+  background-color: var(--gym-dark-bg);
+}
+
+.section {
+  padding: 4rem 2rem;
+}
