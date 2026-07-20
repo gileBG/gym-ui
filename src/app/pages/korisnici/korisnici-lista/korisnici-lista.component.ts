@@ -10,14 +10,17 @@ import { InputText } from 'primeng/inputtext';
 import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
 import { Card } from 'primeng/card';
+import { Toast } from 'primeng/toast';
+import { ConfirmDialog } from 'primeng/confirmdialog';
 import { KorisniciService } from '../../../core/services/korisnici.service';
+import { ScanService } from '../../../core/services/scan.service';
 import { Korisnik } from '../../../core/models/korisnik.model';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-korisnici-lista',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TableModule, Button, Tag, InputText, IconField, InputIcon, Card, TranslateModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TableModule, Button, InputText, IconField, InputIcon, Card, Toast, ConfirmDialog, Tag, TranslateModule],
   template: `
     <div class="gym-page px-4 py-4">
       <div class="max-w-7xl mx-auto">
@@ -70,7 +73,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
           [loading]="loading"
           [paginator]="true"
           [rows]="10"
-          [globalFilterFields]="['ime', 'prezime', 'email', 'username']"
+          [globalFilterFields]="['ime', 'prezime', 'email']"
           #dt
           styleClass="p-datatable-striped gym-korisnici-table"
           [rowsPerPageOptions]="[5, 10, 25]"
@@ -89,9 +92,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
               <th pSortableColumn="id">ID <p-sortIcon field="id" /></th>
               <th pSortableColumn="ime">{{ 'COMMON.FIRST_NAME' | translate }} <p-sortIcon field="ime" /></th>
               <th pSortableColumn="prezime">{{ 'COMMON.LAST_NAME' | translate }} <p-sortIcon field="prezime" /></th>
-              <th pSortableColumn="username">{{ 'USERS.USERNAME_COL' | translate }} <p-sortIcon field="username" /></th>
               <th pSortableColumn="email">{{ 'COMMON.EMAIL' | translate }} <p-sortIcon field="email" /></th>
-              <th>{{ 'USERS.ROLE' | translate }}</th>
               <th>{{ 'USERS.ACTIONS' | translate }}</th>
             </tr>
           </ng-template>
@@ -101,13 +102,33 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
               <td>{{ k.id }}</td>
               <td>{{ k.ime }}</td>
               <td>{{ k.prezime }}</td>
-              <td>{{ k.username }}</td>
               <td>{{ k.email }}</td>
               <td>
-                <p-tag [value]="k.rola" [severity]="getRoleSeverity(k.rola)" />
-              </td>
-              <td>
-                <div class="flex gap-2">
+                <div class="flex gap-2 flex-wrap align-items-center">
+                  <p-tag
+                    *ngIf="checkedInUsers.has(k.id)"
+                    value="U teretani"
+                    severity="success"
+                    [style]="{ 'font-size': '0.7rem' }"
+                  />
+                  <p-button
+                    icon="pi pi-sign-in"
+                    size="small"
+                    severity="success"
+                    [outlined]="true"
+                    title="Ručni check-in"
+                    [disabled]="checkedInUsers.has(k.id)"
+                    (onClick)="checkInUser(k)"
+                  />
+                  <p-button
+                    icon="pi pi-sign-out"
+                    size="small"
+                    severity="warn"
+                    [outlined]="true"
+                    title="Ručni check-out"
+                    [disabled]="!checkedInUsers.has(k.id)"
+                    (onClick)="checkOutUser(k)"
+                  />
                   <p-button
                     icon="pi pi-eye"
                     size="small"
@@ -137,6 +158,9 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
         </p-table>
       </div>
     </div>
+
+    <p-toast />
+    <p-confirmdialog />
   `,
   styles: [`
     .max-w-7xl { max-width: 1400px; margin-left: auto; margin-right: auto; }
@@ -180,6 +204,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 export class KorisniciListaComponent implements OnInit {
   private fb = inject(FormBuilder);
   private korisniciService = inject(KorisniciService);
+  private scanService = inject(ScanService);
   private confirmationService = inject(ConfirmationService);
   private messageService = inject(MessageService);
   private router = inject(Router);
@@ -188,6 +213,8 @@ export class KorisniciListaComponent implements OnInit {
   korisnici: Korisnik[] = [];
   loading = true;
   creating = false;
+  /** Set korisnika koji su trenutno u teretani */
+  checkedInUsers = new Set<number>();
 
   form = this.fb.group({
     ime: ['', Validators.required],
@@ -206,8 +233,17 @@ export class KorisniciListaComponent implements OnInit {
       next: (data) => {
         this.korisnici = data;
         this.loading = false;
+        this._loadActiveUsers();
       },
       error: () => { this.loading = false; }
+    });
+  }
+
+  private _loadActiveUsers(): void {
+    this.scanService.getActiveVezbacIds().subscribe({
+      next: (ids) => {
+        this.checkedInUsers = new Set(ids);
+      }
     });
   }
 
@@ -216,7 +252,10 @@ export class KorisniciListaComponent implements OnInit {
       return;
     }
 
-    const request = this.form.getRawValue() as { ime: string; prezime: string; email: string; lozinka: string };
+    const request = {
+      ...(this.form.getRawValue() as { ime: string; prezime: string; email: string; lozinka: string }),
+      rola: 'VEZBAC'
+    };
 
     this.creating = true;
     this.korisniciService.createVezbac(request).subscribe({
@@ -265,6 +304,48 @@ export class KorisniciListaComponent implements OnInit {
       },
       error: () => {
         this.messageService.add({ severity: 'error', summary: this.translate.instant('COMMON.ERROR'), detail: this.translate.instant('USERS.DELETE_FAILED') });
+      }
+    });
+  }
+
+  /** Ručni check-in korisnika (admin evidentira ulaz) */
+  checkInUser(k: Korisnik): void {
+    this.scanService.manualCheckIn(k.id).subscribe({
+      next: () => {
+        this.checkedInUsers.add(k.id);
+        this.messageService.add({
+          severity: 'success',
+          summary: this.translate.instant('COMMON.SUCCESS'),
+          detail: this.translate.instant('SCAN.CHECK_IN_SUCCESS', { name: `${k.ime} ${k.prezime}` })
+        });
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: this.translate.instant('COMMON.ERROR'),
+          detail: this.translate.instant('SCAN.CHECK_IN_FAILED', { name: `${k.ime} ${k.prezime}` })
+        });
+      }
+    });
+  }
+
+  /** Ručni check-out korisnika (admin evidentira izlaz) */
+  checkOutUser(k: Korisnik): void {
+    this.scanService.manualCheckOut(k.id).subscribe({
+      next: () => {
+        this.checkedInUsers.delete(k.id);
+        this.messageService.add({
+          severity: 'success',
+          summary: this.translate.instant('COMMON.SUCCESS'),
+          detail: this.translate.instant('SCAN.CHECK_OUT_SUCCESS', { name: `${k.ime} ${k.prezime}` })
+        });
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: this.translate.instant('COMMON.ERROR'),
+          detail: this.translate.instant('SCAN.CHECK_OUT_FAILED', { name: `${k.ime} ${k.prezime}` })
+        });
       }
     });
   }

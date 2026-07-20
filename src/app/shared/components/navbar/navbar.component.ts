@@ -23,11 +23,14 @@ import { I18nService } from '../../../core/services/i18n.service';
         <nav class="navbar-links flex align-items-center gap-4">
           <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">{{ 'NAV.HOME' | translate }}</a>
           <a routerLink="/about" routerLinkActive="active">{{ 'NAV.ABOUT' | translate }}</a>
-          <a routerLink="/programi" routerLinkActive="active" *ngIf="isLoggedIn()">{{ 'NAV.PROGRAMS' | translate }}</a>
-          <a routerLink="/clanarine" routerLinkActive="active" *ngIf="isAdminOrZaposleni()">{{ 'NAV.MEMBERSHIPS' | translate }}</a>
+          <a routerLink="/programi" routerLinkActive="active">{{ 'NAV.PROGRAMS' | translate }}</a>
+          <a routerLink="/clanarine" routerLinkActive="active">{{ 'NAV.MEMBERSHIPS' | translate }}</a>
           <a routerLink="/korisnici" routerLinkActive="active" *ngIf="isAdmin()">{{ 'NAV.USERS' | translate }}</a>
           <a routerLink="/zaposleni" routerLinkActive="active" *ngIf="isAdmin()">{{ 'NAV.EMPLOYEES' | translate }}</a>
           <a routerLink="/dashboard" routerLinkActive="active" *ngIf="isAdminOrZaposleni()">{{ 'NAV.DASHBOARD' | translate }}</a>
+          <a routerLink="/obavestenja" routerLinkActive="active" *ngIf="isAdmin()">{{ 'NAV.NOTIFICATIONS' | translate }}</a>
+          <a routerLink="/qr-kodovi" routerLinkActive="active" *ngIf="isAdmin()">{{ 'QR.NAV_LINK' | translate }}</a>
+          <a routerLink="/moj-dashboard" routerLinkActive="active" *ngIf="isLoggedIn() && !isAdminOrZaposleni()">Moj dashboard</a>
         </nav>
 
         <!-- Auth actions -->

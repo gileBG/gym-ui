@@ -93,8 +93,12 @@ export class ProgramDetaljComponent implements OnInit {
   ngOnInit(): void {
     const numId = Number(this.id());
     if (isNaN(numId)) { this.loading = false; return; }
+
     this.programiService.getById(numId).subscribe({
-      next: (p) => { this.program = p; this.loading = false; },
+      next: (program) => {
+        this.program = program;
+        this.loading = false;
+      },
       error: () => { this.loading = false; }
     });
   }

@@ -10,6 +10,7 @@ import { Button } from 'primeng/button';
 import { Message } from 'primeng/message';
 import { FloatLabel } from 'primeng/floatlabel';
 import { AuthService } from '../../../core/services/auth.service';
+import { RecaptchaService } from '../../../core/services/recaptcha.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
@@ -35,6 +36,9 @@ function passwordMatchValidator(control: AbstractControl): ValidationErrors | nu
           </ng-template>
 
           <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-column gap-3 px-2">
+            <!-- Honeypot polje – skriveno od ljudi, vide ga samo botovi -->
+            <input formControlName="honeypot" class="honeypot-field" tabindex="-1" autocomplete="off" />
+
             <div class="grid">
               <div class="col-6">
                 <p-floatLabel>
@@ -113,6 +117,15 @@ function passwordMatchValidator(control: AbstractControl): ValidationErrors | nu
     }
     .auth-subtitle { color: var(--gym-text-muted); font-size: 0.9rem; }
     .text-muted { color: var(--gym-text-muted); font-size: 0.9rem; }
+    .honeypot-field {
+      position: absolute !important;
+      left: -9999px !important;
+      top: -9999px !important;
+      opacity: 0 !important;
+      height: 0 !important;
+      width: 0 !important;
+      overflow: hidden !important;
+    }
   `]
 })
 export class RegisterComponent {
@@ -121,6 +134,7 @@ export class RegisterComponent {
   private router = inject(Router);
   private messageService = inject(MessageService);
   private translate = inject(TranslateService);
+  private recaptcha = inject(RecaptchaService);
 
   loading = false;
   errorMsg = '';
@@ -130,31 +144,34 @@ export class RegisterComponent {
     prezime: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
     lozinka: ['', [Validators.required, Validators.minLength(6)]],
-    confirmPassword: ['', Validators.required]
+    confirmPassword: ['', Validators.required],
+    honeypot: ['']
   }, { validators: passwordMatchValidator });
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.form.invalid) return;
     this.loading = true;
     this.errorMsg = '';
 
-    const { confirmPassword, ...request } = this.form.value as any;
+    const { confirmPassword, honeypot, ...request } = this.form.value as any;
+    const recaptchaToken = await this.recaptcha.execute();
 
-    this.auth.register(request).subscribe({
-      next: (res) => {
+    const payload = {
+      ...request,
+      rola: request?.rola || 'VEZBAC',
+      honeypot: honeypot || '',
+      recaptchaToken: recaptchaToken
+    };
+
+    this.auth.register(payload).subscribe({
+      next: () => {
         this.loading = false;
         this.messageService.add({
           severity: 'success',
           summary: this.translate.instant('COMMON.SUCCESS'),
-          detail: this.translate.instant('REGISTER.CREATED')
+          detail: this.translate.instant('REGISTER.PENDING_APPROVAL')
         });
-
-        const role = res.rola;
-        if (role === 'ADMIN' || role === 'ZAPOSLENI' || role === 'TRENER') {
-          this.router.navigate(['/dashboard']);
-        } else {
-          this.router.navigate(['/profil']);
-        }
+        this.router.navigate(['/login']);
       },
       error: (err) => {
         this.loading = false;

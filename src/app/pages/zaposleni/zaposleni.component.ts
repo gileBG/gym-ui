@@ -10,6 +10,7 @@ import { MessageService } from 'primeng/api';
 import { KorisniciService } from '../../core/services/korisnici.service';
 import { Korisnik } from '../../core/models/korisnik.model';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-zaposleni',
@@ -25,7 +26,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
         </div>
 
         <div class="grid">
-          <div class="col-12 lg:col-8">
+          <div [class]="isAdmin ? 'col-12 lg:col-8' : 'col-12'">
             <p-card styleClass="zaposleni-card">
               <ng-template pTemplate="header">
                 <div class="card-head px-4 pt-4 pb-2">
@@ -74,7 +75,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
             </p-card>
           </div>
 
-          <div class="col-12 lg:col-4">
+          <div class="col-12 lg:col-4" *ngIf="isAdmin">
             <p-card styleClass="zaposleni-card">
               <ng-template pTemplate="header">
                 <div class="card-head px-4 pt-4 pb-2">
@@ -175,12 +176,14 @@ export class ZaposleniComponent implements OnInit {
   private korisniciService = inject(KorisniciService);
   private messageService = inject(MessageService);
   private translate = inject(TranslateService);
+  private authService = inject(AuthService);
 
   zaposleni: Korisnik[] = [];
   loading = true;
   creating = false;
   rolesLoading = true;
   roleOptions: { label: string; value: string }[] = [];
+  isAdmin = this.authService.hasRole('ADMIN');
 
   form = this.fb.group({
     ime: ['', Validators.required],
@@ -191,6 +194,12 @@ export class ZaposleniComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    if (!this.isAdmin) {
+      this.loading = false;
+      this.rolesLoading = false;
+      return;
+    }
+
     this.korisniciService.getRoles().subscribe({
       next: (roles) => {
         const normalized = roles.filter(r => r !== 'VEZBAC');

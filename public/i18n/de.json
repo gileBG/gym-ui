@@ -7,6 +7,7 @@
     "USERS": "Benutzer",
     "EMPLOYEES": "Mitarbeiter",
     "DASHBOARD": "Dashboard",
+    "NOTIFICATIONS": "Benachrichtigungen",
     "LANGUAGE": "Sprache"
   },
   "AUTH": {
@@ -28,7 +29,9 @@
     "BACK": "Zuruck",
     "DURATION": "Dauer",
     "PRICE": "Preis",
-    "STATUS": "Status"
+    "STATUS": "Status",
+    "ACTIONS": "Aktionen",
+    "YES": "Ja"
   },
   "LOGIN": {
     "SUBTITLE": "Melde dich in deinem Konto an",
@@ -45,7 +48,10 @@
     "PASSWORD_MISMATCH": "Passworter stimmen nicht uberein",
     "HAVE_ACCOUNT": "Hast du bereits ein Konto?",
     "CREATED": "Konto erstellt. Bitte anmelden.",
-    "FAILED": "Registrierung fehlgeschlagen. Bitte erneut versuchen."
+    "PENDING_APPROVAL": "Registrierung wurde zur Admin-Genehmigung gesendet! Warte auf die Genehmigung deines Kontos.",
+    "FAILED": "Registrierung fehlgeschlagen. Bitte erneut versuchen.",
+    "RATE_LIMIT": "Zu viele Registrierungsversuche. Bitte versuchen Sie es später erneut.",
+    "RECAPTCHA_FAILED": "reCAPTCHA-Verifizierung fehlgeschlagen. Bitte versuchen Sie es erneut."
   },
   "LANDING": {
     "BADGE": "NUMMER 1 FITNESSSTUDIO IN DER STADT",
@@ -193,7 +199,14 @@
     "SELECT_PROGRAM": "Programm auswahlen",
     "AMOUNT_RSD": "Betrag (RSD)",
     "CREATED": "Mitgliedschaft erstellt",
+    "UPDATED": "Mitgliedschaft aktualisiert",
+    "DELETED": "Mitgliedschaft geloscht",
     "CREATE_FAILED": "Erstellung fehlgeschlagen",
+    "UPDATE_FAILED": "Aktualisierung fehlgeschlagen",
+    "DELETE_FAILED": "Loschen fehlgeschlagen",
+    "ACTIONS": "Aktionen",
+    "EDIT": "Bearbeiten",
+    "DELETE_Q": "Mitgliedschaft \"{{name}}\" loschen?",
     "ACTIVE": "AKTIV",
     "EXPIRED": "ABGELAUFEN"
   },
@@ -212,7 +225,31 @@
     "NO_DATA": "Keine Daten",
     "NAME": "Name",
     "EMAIL": "E-Mail",
-    "ROLE": "Rolle"
+    "ROLE": "Rolle",
+    "TAB_STATS": "Statistiken",
+    "TAB_PENDING": "Ausstehende Genehmigungen",
+    "TAB_ACTIONS": "Schnellaktionen",
+    "TAB_REPORTS": "Berichte",
+    "PENDING_REQUESTS": "Ausstehende Registrierungsanfragen",
+    "REGISTERED_AT": "Anfragedatum",
+    "APPROVE": "Genehmigen",
+    "REJECT": "Ablehnen",
+    "NO_PENDING": "Keine ausstehenden Anfragen",
+    "CONFIRM_APPROVE_HEADER": "Bestätigung der Genehmigung",
+    "CONFIRM_APPROVE": "Benutzer {{name}} genehmigen?",
+    "CONFIRM_REJECT_HEADER": "Bestätigung der Ablehnung",
+    "CONFIRM_REJECT": "Benutzer {{name}} ablehnen?",
+    "USER_APPROVED": "Benutzer {{name}} genehmigt",
+    "USER_REJECTED": "Benutzer {{name}} abgelehnt",
+    "APPROVE_FAILED": "Genehmigung fehlgeschlagen",
+    "REJECT_FAILED": "Ablehnung fehlgeschlagen",
+    "EXPIRING_TITLE": "Läuft bald ab",
+    "EXPIRING_CLANARINA": "Mitgliedschaft",
+    "EXPIRING_PROGRAM": "Programm",
+    "EXPIRING_TODAY": "läuft heute ab",
+    "EXPIRING_TOMORROW": "läuft morgen ab",
+    "EXPIRING_DAYS": "läuft in {{days}} Tagen ab",
+    "NO_EXPIRING": "Keine Mitgliedschaften oder Programme, die in den nächsten 3 Tagen ablaufen"
   },
   "PROFILE": {
     "TITLE": "MEIN PROFIL",
@@ -253,6 +290,44 @@
     "LOAD_FAILED": "Mitarbeiter konnten nicht geladen werden",
     "ROLES_LOAD_FAILED": "Rollen konnten nicht geladen werden",
     "TAG": "Mitarbeiter",
-    "EMPTY": "Keine registrierten Mitarbeiter"
+    "EMPTY": "Keine registrierten Mitarbeiter",
+    "ADMIN_ONLY": "Nur Administratoren konnen neue Mitarbeiter hinzufugen"
+  },
+  "UPLATE": {
+    "TITLE": "Zahlungen",
+    "CREATED": "Zahlung erfolgreich erstellt",
+    "CREATE_FAILED": "Zahlungserstellung fehlgeschlagen",
+    "UPDATED": "Zahlung aktualisiert",
+    "UPDATE_FAILED": "Zahlungsaktualisierung fehlgeschlagen",
+    "DELETED": "Zahlung geloscht",
+    "DELETE_FAILED": "Loschen der Zahlung fehlgeschlagen",
+    "AMOUNT": "Betrag",
+    "DATE": "Zahlungsdatum",
+    "METHOD": "Zahlungsmethode",
+    "STATUS": "Status"
+  },
+  "QR": {
+    "PAGE_TITLE": "QR-Codes",
+    "ENTRY_QR": "Eingang",
+    "EXIT_QR": "Ausgang",
+    "ENTRY_DESC": "Diesen QR-Code am Eingang scannen",
+    "EXIT_DESC": "Diesen QR-Code am Ausgang scannen",
+    "DOWNLOAD_ENTRY": "Eingangs-QR herunterladen",
+    "DOWNLOAD_EXIT": "Ausgangs-QR herunterladen",
+    "RECENT_SCANS": "Letzte Scans",
+    "NO_SCANS": "Keine Scans",
+    "SCAN_TIME": "Scan-Zeit",
+    "DIRECTION": "Richtung",
+    "USER": "Benutzer",
+    "NAV_LINK": "QR-Codes"
+  },
+  "SCAN": {
+    "CHECK_IN": "Einchecken",
+    "CHECK_OUT": "Auschecken",
+    "CHECK_IN_SUCCESS": "{{name}} wurde eingecheckt",
+    "CHECK_OUT_SUCCESS": "{{name}} wurde ausgecheckt",
+    "CHECK_IN_FAILED": "Einchecken fur {{name}} fehlgeschlagen",
+    "CHECK_OUT_FAILED": "Auschecken fur {{name}} fehlgeschlagen",
+    "IN_GYM": "Im Studio"
   }
 }

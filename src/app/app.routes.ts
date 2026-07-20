@@ -27,6 +27,16 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/auth/register/register.component').then(m => m.RegisterComponent)
       },
       {
+        path: 'zaboravljena-lozinka',
+        canActivate: [guestGuard],
+        loadComponent: () => import('./pages/auth/forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent)
+      },
+      {
+        path: 'reset-lozinke',
+        canActivate: [guestGuard],
+        loadComponent: () => import('./pages/auth/reset-password/reset-password.component').then(m => m.ResetPasswordComponent)
+      },
+      {
         path: 'dashboard',
         canActivate: [roleGuard],
         data: { roles: ['ADMIN', 'ZAPOSLENI'] },
@@ -51,20 +61,33 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/zaposleni/zaposleni.component').then(m => m.ZaposleniComponent)
       },
       {
+        path: 'obavestenja',
+        canActivate: [roleGuard],
+        data: { roles: ['ADMIN'] },
+        loadComponent: () => import('./pages/obavestenja/obavestenja.component').then(m => m.ObavestenjaComponent)
+      },
+      {
+        path: 'qr-kodovi',
+        canActivate: [roleGuard],
+        data: { roles: ['ADMIN'] },
+        loadComponent: () => import('./pages/qr-kodovi/qr-kodovi.component').then(m => m.QrKodoviComponent)
+      },
+      {
         path: 'programi',
-        canActivate: [authGuard],
         loadComponent: () => import('./pages/programi/programi-lista/programi-lista.component').then(m => m.ProgramiListaComponent)
       },
       {
         path: 'programi/:id',
-        canActivate: [authGuard],
         loadComponent: () => import('./pages/programi/program-detalj/program-detalj.component').then(m => m.ProgramDetaljComponent)
       },
       {
         path: 'clanarine',
-        canActivate: [roleGuard],
-        data: { roles: ['ADMIN', 'ZAPOSLENI'] },
         loadComponent: () => import('./pages/clanarine/clanarine.component').then(m => m.ClanarineComponent)
+      },
+      {
+        path: 'moj-dashboard',
+        canActivate: [authGuard],
+        loadComponent: () => import('./pages/user-dashboard/user-dashboard.component').then(m => m.UserDashboardComponent)
       },
       {
         path: 'profil',

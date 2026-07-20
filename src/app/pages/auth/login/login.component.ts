@@ -31,7 +31,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
           <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-column gap-4 px-2">
             <p-floatLabel>
-              <input pInputText id="email" formControlName="email" type="email" class="w-full" autocomplete="email" />
+              <input pInputText id="email" formControlName="email" type="text" class="w-full" autocomplete="username" />
               <label for="email">{{ 'COMMON.EMAIL' | translate }}</label>
             </p-floatLabel>
             <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
@@ -60,6 +60,9 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
             />
 
             <div class="text-center mt-2">
+              <a routerLink="/zaboravljena-lozinka" class="forgot-link">{{ 'LOGIN.FORGOT_PASSWORD' | translate }}</a>
+            </div>
+            <div class="text-center mt-1">
               <span class="text-muted">{{ 'LOGIN.NO_ACCOUNT' | translate }} </span>
               <a routerLink="/register" class="font-bold">{{ 'AUTH.REGISTER' | translate }}</a>
             </div>
@@ -93,6 +96,8 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     }
     .auth-subtitle { color: var(--gym-text-muted); font-size: 0.9rem; }
     .text-muted { color: var(--gym-text-muted); font-size: 0.9rem; }
+    .forgot-link { color: var(--gym-gold); font-size: 0.85rem; text-decoration: none; }
+    .forgot-link:hover { text-decoration: underline; }
   `]
 })
 export class LoginComponent {
@@ -106,7 +111,7 @@ export class LoginComponent {
   errorMsg = '';
 
   form = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
+    email: ['', [Validators.required]],
     lozinka: ['', Validators.required]
   });
 
@@ -115,7 +120,12 @@ export class LoginComponent {
     this.loading = true;
     this.errorMsg = '';
 
-    this.auth.login(this.form.value as any).subscribe({
+    const payload = {
+      email: String(this.form.value.email ?? '').trim(),
+      lozinka: String(this.form.value.lozinka ?? '')
+    };
+
+    this.auth.login(payload).subscribe({
       next: (res) => {
         this.loading = false;
         this.messageService.add({
@@ -127,13 +137,21 @@ export class LoginComponent {
         if (role === 'ADMIN' || role === 'ZAPOSLENI') {
           this.router.navigate(['/dashboard']);
         } else {
-          this.router.navigate(['/profil']);
+          this.router.navigate(['/moj-dashboard']);
         }
       },
-      error: () => {
+      error: (err) => {
         this.loading = false;
-        this.errorMsg = this.translate.instant('LOGIN.INVALID_CREDENTIALS');
+        this.errorMsg = this.extractLoginError(err);
       }
     });
+  }
+
+  private extractLoginError(err: any): string {
+    const raw = err?.error;
+    if (typeof raw === 'string' && raw.trim()) return raw;
+    if (typeof raw?.message === 'string' && raw.message.trim()) return raw.message;
+    if (typeof raw?.error === 'string' && raw.error.trim()) return raw.error;
+    return this.translate.instant('LOGIN.INVALID_CREDENTIALS');
   }
 }

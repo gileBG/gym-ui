@@ -1,19 +1,19 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MessageService } from 'primeng/api';
-import { DialogModule } from 'primeng/dialog';
 import { ProgramiService } from '../../../core/services/programi.service';
+import { ClanarineService } from '../../../core/services/clanarine.service';
 import { KorisniciService } from '../../../core/services/korisnici.service';
-import { AuthService } from '../../../core/services/auth.service';
 import { Program } from '../../../core/models/program.model';
 import { Korisnik } from '../../../core/models/korisnik.model';
+import { AuthService } from '../../../core/services/auth.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-programi-lista',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, DialogModule],
+  imports: [CommonModule, FormsModule, TranslateModule],
   template: `
     <div class="gym-page px-4 py-4">
       <div class="max-w-7xl mx-auto">
@@ -28,28 +28,23 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
         <!-- Nedeljni raspored -->
         <div *ngIf="!loading && schedule.length" class="mt-6">
-          <div class="schedule-header">
-            <div>
-              <h2 class="section-title mb-1">{{ 'PROGRAMS.SCHEDULE_TITLE' | translate }}</h2>
-              <p class="page-sub mb-4">{{ 'PROGRAMS.SCHEDULE_SUBTITLE' | translate }}</p>
-            </div>
-            <button *ngIf="isAdmin" class="add-btn" (click)="openAddDialog()">
-              <i class="pi pi-plus"></i> {{ 'PROGRAMS.ADD_PROGRAM' | translate }}
-            </button>
+          <div>
+            <h2 class="section-title mb-1">{{ 'PROGRAMS.SCHEDULE_TITLE' | translate }}</h2>
+            <p class="page-sub mb-4">{{ 'PROGRAMS.SCHEDULE_SUBTITLE' | translate }}</p>
           </div>
           <div class="schedule-wrapper">
             <table class="schedule-table">
               <thead>
                 <tr>
                   <th class="time-col">{{ 'PROGRAMS.TIME' | translate }}</th>
-                  <th *ngFor="let day of days">{{ day | translate }}</th>
+                  <th *ngFor="let day of days; let di = index" [class.current-day-head]="di === currentDayIndex">{{ day | translate }}</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let row of schedule; let ti = index">
                   <td class="time-cell">{{ times[ti] }}</td>
-                  <td *ngFor="let cell of row" class="prog-cell">
-                    <div *ngIf="cell" class="schedule-pill" [style.background]="getProgramColor(cell.program)">
+                  <td *ngFor="let cell of row; let di = index" class="prog-cell" [class.current-day-cell]="di === currentDayIndex">
+                    <div *ngIf="cell" class="schedule-pill" [class.schedule-pill-active]="isActiveSlot(ti, di)" [style.background]="getProgramColor(cell.program)">
                       <span class="pill-name"><i class="pi pi-clock pill-icon"></i>{{ cell.program.naziv }}</span>
                       <span class="pill-desc">{{ cell.desc }}</span>
                       <span *ngIf="cell.extra" class="pill-desc">{{ cell.extra }}</span>
@@ -88,40 +83,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       </div>
     </div>
 
-    <!-- Dialog: Dodaj program (samo ADMIN) -->
-    <p-dialog
-      [(visible)]="showAddDialog"
-      [modal]="true"
-      [closable]="true"
-      [style]="{width:'480px'}"
-      [header]="'PROGRAMS.ADD_PROGRAM' | translate">
-      <div class="dialog-form">
-        <div class="form-field">
-          <label>{{ 'PROGRAMS.FIELD_NAZIV' | translate }}</label>
-          <input type="text" [(ngModel)]="newProgram.naziv" class="gym-input" />
-        </div>
-        <div class="form-field">
-          <label>{{ 'PROGRAMS.FIELD_OPIS' | translate }}</label>
-          <textarea [(ngModel)]="newProgram.opis" class="gym-input" rows="3"></textarea>
-        </div>
-        <div class="form-field">
-          <label>{{ 'PROGRAMS.FIELD_CENA' | translate }}</label>
-          <input type="number" [(ngModel)]="newProgram.cena" class="gym-input" min="0" />
-        </div>
-        <div class="form-field">
-          <label>{{ 'PROGRAMS.FIELD_TRAJANJE' | translate }}</label>
-          <input type="number" [(ngModel)]="newProgram.trajanjeMeseci" class="gym-input" min="1" />
-        </div>
-        <div class="dialog-actions">
-          <button class="cancel-btn" (click)="showAddDialog = false">{{ 'COMMON.CANCEL' | translate }}</button>
-          <button class="save-btn" (click)="saveProgram()" [disabled]="saving">
-            <i *ngIf="saving" class="pi pi-spin pi-spinner"></i>
-            {{ 'COMMON.SAVE' | translate }}
-          </button>
-        </div>
-      </div>
-    </p-dialog>
-
   `,
   styles: [`
     .max-w-7xl { max-width: 1400px; margin-left: auto; margin-right: auto; }
@@ -134,12 +95,24 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     .schedule-table thead tr { border-bottom: 2px solid var(--gym-gold); }
     .schedule-table th { color: var(--gym-gold); font-family: 'Bebas Neue', cursive; letter-spacing: 1px; padding: 0.75rem 0.5rem; text-align: center; font-size: 0.95rem; background: #111; }
     .schedule-table .time-col { text-align: left; padding-left: 1rem; }
+    .schedule-table th.current-day-head {
+      color: #000;
+      background: linear-gradient(180deg, var(--gym-gold), #e7bb4e);
+      box-shadow: inset 0 -2px 0 rgba(0,0,0,0.22), 0 0 14px rgba(212, 160, 23, 0.28);
+      animation: currentDayHeadPulse 1700ms ease-in-out infinite;
+    }
     .schedule-table tbody tr { border-bottom: 1px solid var(--gym-border); transition: background 0.2s; }
     .schedule-table tbody tr:hover { background: #181818; }
     .time-cell { color: var(--gym-gold); font-size: 0.85rem; font-weight: 700; padding: 0.7rem 0.5rem 0.7rem 1rem; white-space: nowrap; background: #0d0d0d; }
     .prog-cell { padding: 0.35rem 0.3rem; vertical-align: middle; min-width: 110px; }
+    .prog-cell.current-day-cell { background: rgba(212, 160, 23, 0.05); }
     .schedule-pill { border-radius: 6px; padding: 0.45rem 0.6rem; display: flex; flex-direction: column; gap: 0.1rem; opacity: 0.92; transition: opacity 0.2s, transform 0.15s; cursor: default; }
     .schedule-pill:hover { opacity: 1; transform: scale(1.03); }
+    .schedule-pill-active {
+      animation: currentSlotPulse 1600ms ease-in-out infinite;
+      box-shadow: 0 0 0 0 rgba(212, 160, 23, 0.45);
+      opacity: 1;
+    }
     .pill-name { font-size: 1rem; font-weight: 700; color: #000; line-height: 1.3; display: flex; align-items: center; gap: 0.25rem; }
     .pill-icon { font-size: 0.85rem; flex-shrink: 0; }
     .pill-desc { font-size: 0.82rem; color: #000; font-style: normal; line-height: 1.2; font-weight: 400; }
@@ -151,37 +124,50 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     .trainer-info { display: flex; flex-direction: column; gap: 0.25rem; overflow: hidden; }
     .trainer-name { font-family: 'Bebas Neue', cursive; font-size: 1rem; color: #fff; letter-spacing: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .trainer-desc { font-size: 0.8rem; color: var(--gym-text-muted); line-height: 1.4; }
-    .schedule-header { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem; }
-    .add-btn { background: var(--gym-gold); color: #000; border: none; border-radius: 6px; padding: 0.55rem 1.1rem; font-weight: 700; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; transition: opacity 0.2s; }
-    .add-btn:hover { opacity: 0.85; }
-    .dialog-form { display: flex; flex-direction: column; gap: 1rem; padding: 0.5rem 0; }
-    .form-field { display: flex; flex-direction: column; gap: 0.3rem; }
-    .form-field label { font-size: 0.85rem; color: var(--gym-text-muted); }
-    .gym-input { background: #1a1a1a; border: 1px solid var(--gym-border); border-radius: 6px; color: #fff; padding: 0.5rem 0.75rem; font-size: 0.95rem; width: 100%; box-sizing: border-box; outline: none; }
-    .gym-input:focus { border-color: var(--gym-gold); }
-    textarea.gym-input { resize: vertical; }
-    .dialog-actions { display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 0.5rem; }
-    .cancel-btn { background: transparent; border: 1px solid var(--gym-border); color: var(--gym-text-muted); border-radius: 6px; padding: 0.5rem 1rem; cursor: pointer; }
-    .save-btn { background: var(--gym-gold); color: #000; border: none; border-radius: 6px; padding: 0.5rem 1.2rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; }
-    .save-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    @keyframes currentSlotPulse {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(212, 160, 23, 0.34);
+      }
+      50% {
+        transform: scale(1.03);
+        box-shadow: 0 0 0 8px rgba(212, 160, 23, 0.08);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(212, 160, 23, 0);
+      }
+    }
+
+    @keyframes currentDayHeadPulse {
+      0% { filter: brightness(1); }
+      50% { filter: brightness(1.08); }
+      100% { filter: brightness(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .schedule-table th.current-day-head {
+        animation: none;
+      }
+      .schedule-pill-active {
+        animation: none;
+        box-shadow: 0 0 0 2px rgba(212, 160, 23, 0.45);
+      }
+    }
   `]
 })
-export class ProgramiListaComponent implements OnInit {
+export class ProgramiListaComponent implements OnInit, OnDestroy {
   private programiService = inject(ProgramiService);
+  private clanarineService = inject(ClanarineService);
   private korisniciService = inject(KorisniciService);
+  private authService = inject(AuthService);
   private messageService = inject(MessageService);
   private translate = inject(TranslateService);
-
-  private authService = inject(AuthService);
-
-  readonly isAdmin = this.authService.userRole() === 'ADMIN';
 
   programs: Program[] = [];
   trainers: Korisnik[] = [];
   loading = true;
-  showAddDialog = false;
-  saving = false;
-  newProgram = { naziv: '', opis: '', cena: 0, trajanjeMeseci: 1 };
 
   readonly times = ['08:30', '09:00', '09:30', '11:00', '12:30', '14:00', '15:30', '17:00', '18:30', '20:00'];
   readonly days = [
@@ -189,6 +175,9 @@ export class ProgramiListaComponent implements OnInit {
     'PROGRAMS.DAY_THU', 'PROGRAMS.DAY_FRI', 'PROGRAMS.DAY_SAT', 'PROGRAMS.DAY_SUN'
   ];
   schedule: ({ program: Program; desc: string; extra?: string } | null)[][] = [];
+  currentDayIndex = -1;
+  currentMinutes = 0;
+  private clockTimer: ReturnType<typeof setInterval> | null = null;
 
   private readonly programColors = ['#d4a017', '#e74c3c', '#3498db', '#2ecc71', '#9b59b6', '#e67e22', '#1abc9c'];
 
@@ -234,8 +223,18 @@ export class ProgramiListaComponent implements OnInit {
   ];
 
   ngOnInit(): void {
+    this.updateCurrentTimeContext();
+    this.clockTimer = setInterval(() => this.updateCurrentTimeContext(), 30000);
+
     this.loadPrograms();
     this.loadTrainers();
+  }
+
+  ngOnDestroy(): void {
+    if (this.clockTimer) {
+      clearInterval(this.clockTimer);
+      this.clockTimer = null;
+    }
   }
 
   loadTrainers(): void {
@@ -248,16 +247,16 @@ export class ProgramiListaComponent implements OnInit {
   loadPrograms(): void {
     this.loading = true;
     this.programiService.getAll().subscribe({
-      next: (data) => { this.programs = data; this.loading = false; this.buildSchedule(); },
+      next: (programs) => {
+        this.programs = programs;
+        this.loading = false;
+        this.buildSchedule();
+      },
       error: (err) => {
         this.loading = false;
-
         let detail = this.translate.instant('PROGRAMS.OP_FAILED');
-        if (err?.status === 401) {
-          detail = this.translate.instant('PROGRAMS.LOAD_UNAUTHORIZED');
-        } else if (err?.status === 403) {
-          detail = this.translate.instant('PROGRAMS.LOAD_FORBIDDEN');
-        }
+        if (err?.status === 401) detail = this.translate.instant('PROGRAMS.LOAD_UNAUTHORIZED');
+        if (err?.status === 403) detail = this.translate.instant('PROGRAMS.LOAD_FORBIDDEN');
 
         this.messageService.add({
           severity: 'error',
@@ -273,6 +272,7 @@ export class ProgramiListaComponent implements OnInit {
       this.schedule = this.scheduleMap.map(row => row.map(() => null));
       return;
     }
+
     this.schedule = this.scheduleMap.map(row =>
       row.map(cell => cell !== null
         ? { program: this.programs[cell[0] % this.programs.length], desc: cell[1], extra: cell[2] }
@@ -286,34 +286,28 @@ export class ProgramiListaComponent implements OnInit {
     return this.programColors[idx % this.programColors.length];
   }
 
-  openAddDialog(): void {
-    this.newProgram = { naziv: '', opis: '', cena: 0, trajanjeMeseci: 1 };
-    this.showAddDialog = true;
+  isActiveSlot(timeIndex: number, dayIndex: number): boolean {
+    if (dayIndex !== this.currentDayIndex) return false;
+
+    const currentSlotStart = this.parseTimeToMinutes(this.times[timeIndex]);
+    const nextSlotStart = timeIndex < this.times.length - 1
+      ? this.parseTimeToMinutes(this.times[timeIndex + 1])
+      : 24 * 60;
+
+    return this.currentMinutes >= currentSlotStart && this.currentMinutes < nextSlotStart;
   }
 
-  saveProgram(): void {
-    if (!this.newProgram.naziv.trim()) return;
-    this.saving = true;
-    this.programiService.create(this.newProgram).subscribe({
-      next: (p) => {
-        this.programs = [...this.programs, p];
-        this.buildSchedule();
-        this.showAddDialog = false;
-        this.saving = false;
-        this.messageService.add({
-          severity: 'success',
-          summary: this.translate.instant('COMMON.SUCCESS'),
-          detail: this.translate.instant('PROGRAMS.ADD_SUCCESS')
-        });
-      },
-      error: () => {
-        this.saving = false;
-        this.messageService.add({
-          severity: 'error',
-          summary: this.translate.instant('COMMON.ERROR'),
-          detail: this.translate.instant('PROGRAMS.OP_FAILED')
-        });
-      }
-    });
+  private updateCurrentTimeContext(): void {
+    const now = new Date();
+    this.currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+    // JS: Sunday=0 ... Saturday=6 -> convert to Monday-first index (Mon=0 ... Sun=6)
+    const jsDay = now.getDay();
+    this.currentDayIndex = (jsDay + 6) % 7;
+  }
+
+  private parseTimeToMinutes(hhmm: string): number {
+    const [h, m] = hhmm.split(':').map(Number);
+    return (Number.isFinite(h) ? h : 0) * 60 + (Number.isFinite(m) ? m : 0);
   }
 }

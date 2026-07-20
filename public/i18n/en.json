@@ -7,6 +7,7 @@
     "USERS": "Users",
     "EMPLOYEES": "Employees",
     "DASHBOARD": "Dashboard",
+    "NOTIFICATIONS": "Notifications",
     "LANGUAGE": "Language"
   },
   "AUTH": {
@@ -28,7 +29,9 @@
     "BACK": "Back",
     "DURATION": "Duration",
     "PRICE": "Price",
-    "STATUS": "Status"
+    "STATUS": "Status",
+    "ACTIONS": "Actions",
+    "YES": "Yes"
   },
   "LOGIN": {
     "SUBTITLE": "Sign in to your account",
@@ -45,7 +48,10 @@
     "PASSWORD_MISMATCH": "Passwords do not match",
     "HAVE_ACCOUNT": "Already have an account?",
     "CREATED": "Account created. Please sign in.",
-    "FAILED": "Registration failed. Please try again."
+    "PENDING_APPROVAL": "Registration has been sent for admin approval! Wait for the admin to approve your account.",
+    "FAILED": "Registration failed. Please try again.",
+    "RATE_LIMIT": "Too many registration attempts. Please try again later.",
+    "RECAPTCHA_FAILED": "reCAPTCHA verification failed. Please try again."
   },
   "LANDING": {
     "BADGE": "NUMBER 1 GYM IN THE CITY",
@@ -193,7 +199,14 @@
     "SELECT_PROGRAM": "Select program",
     "AMOUNT_RSD": "Amount (RSD)",
     "CREATED": "Membership created",
+    "UPDATED": "Membership updated",
+    "DELETED": "Membership deleted",
     "CREATE_FAILED": "Creation failed",
+    "UPDATE_FAILED": "Update failed",
+    "DELETE_FAILED": "Delete failed",
+    "ACTIONS": "Actions",
+    "EDIT": "Edit",
+    "DELETE_Q": "Delete membership \"{{name}}\"?",
     "ACTIVE": "ACTIVE",
     "EXPIRED": "EXPIRED"
   },
@@ -212,7 +225,31 @@
     "NO_DATA": "No data",
     "NAME": "Name",
     "EMAIL": "Email",
-    "ROLE": "Role"
+    "ROLE": "Role",
+    "TAB_STATS": "Statistics",
+    "TAB_PENDING": "Pending approvals",
+    "TAB_ACTIONS": "Quick actions",
+    "TAB_REPORTS": "Reports",
+    "PENDING_REQUESTS": "Pending registration requests",
+    "REGISTERED_AT": "Request date",
+    "APPROVE": "Approve",
+    "REJECT": "Reject",
+    "NO_PENDING": "No pending requests",
+    "CONFIRM_APPROVE_HEADER": "Confirm approval",
+    "CONFIRM_APPROVE": "Approve user {{name}}?",
+    "CONFIRM_REJECT_HEADER": "Confirm rejection",
+    "CONFIRM_REJECT": "Reject user {{name}}?",
+    "USER_APPROVED": "User {{name}} approved",
+    "USER_REJECTED": "User {{name}} rejected",
+    "APPROVE_FAILED": "Approval failed",
+    "REJECT_FAILED": "Rejection failed",
+    "EXPIRING_TITLE": "Expiring soon",
+    "EXPIRING_CLANARINA": "Membership",
+    "EXPIRING_PROGRAM": "Program",
+    "EXPIRING_TODAY": "expires today",
+    "EXPIRING_TOMORROW": "expires tomorrow",
+    "EXPIRING_DAYS": "expires in {{days}} days",
+    "NO_EXPIRING": "No memberships or programs expiring in the next 3 days"
   },
   "PROFILE": {
     "TITLE": "MY PROFILE",
@@ -253,6 +290,44 @@
     "LOAD_FAILED": "Failed to load employees",
     "ROLES_LOAD_FAILED": "Failed to load roles",
     "TAG": "Employee",
-    "EMPTY": "No registered employees"
+    "EMPTY": "No registered employees",
+    "ADMIN_ONLY": "Only administrators can add new employees"
+  },
+  "UPLATE": {
+    "TITLE": "Payments",
+    "CREATED": "Payment created successfully",
+    "CREATE_FAILED": "Payment creation failed",
+    "UPDATED": "Payment updated",
+    "UPDATE_FAILED": "Payment update failed",
+    "DELETED": "Payment deleted",
+    "DELETE_FAILED": "Payment deletion failed",
+    "AMOUNT": "Amount",
+    "DATE": "Payment date",
+    "METHOD": "Payment method",
+    "STATUS": "Status"
+  },
+  "QR": {
+    "PAGE_TITLE": "QR Codes",
+    "ENTRY_QR": "Entry",
+    "EXIT_QR": "Exit",
+    "ENTRY_DESC": "Scan this QR code at the gym entrance",
+    "EXIT_DESC": "Scan this QR code at the gym exit",
+    "DOWNLOAD_ENTRY": "Download entry QR",
+    "DOWNLOAD_EXIT": "Download exit QR",
+    "RECENT_SCANS": "Recent scans",
+    "NO_SCANS": "No scans",
+    "SCAN_TIME": "Scan time",
+    "DIRECTION": "Direction",
+    "USER": "User",
+    "NAV_LINK": "QR Codes"
+  },
+  "SCAN": {
+    "CHECK_IN": "Check-in",
+    "CHECK_OUT": "Check-out",
+    "CHECK_IN_SUCCESS": "{{name}} checked in",
+    "CHECK_OUT_SUCCESS": "{{name}} checked out",
+    "CHECK_IN_FAILED": "Check-in failed for {{name}}",
+    "CHECK_OUT_FAILED": "Check-out failed for {{name}}",
+    "IN_GYM": "In gym"
   }
 }

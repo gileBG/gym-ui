@@ -7,6 +7,7 @@
     "USERS": "Korisnici",
     "EMPLOYEES": "Zaposleni",
     "DASHBOARD": "Dashboard",
+    "NOTIFICATIONS": "Obaveštenja",
     "LANGUAGE": "Jezik"
   },
   "AUTH": {
@@ -28,7 +29,9 @@
     "BACK": "Nazad",
     "DURATION": "Trajanje",
     "PRICE": "Cena",
-    "STATUS": "Status"
+    "STATUS": "Status",
+    "ACTIONS": "Akcije",
+    "YES": "Da"
   },
   "LOGIN": {
     "SUBTITLE": "Prijavi se na svoj nalog",
@@ -45,7 +48,10 @@
     "PASSWORD_MISMATCH": "Lozinke se ne poklapaju",
     "HAVE_ACCOUNT": "Vec imas nalog?",
     "CREATED": "Nalog je kreiran! Prijavi se.",
-    "FAILED": "Registracija nije uspela. Pokusaj ponovo."
+    "PENDING_APPROVAL": "Registracija je poslata na odobrenje administratora! Sačekaj da admin odobri tvoj nalog.",
+    "FAILED": "Registracija nije uspela. Pokusaj ponovo.",
+    "RATE_LIMIT": "Previse zahteva za registraciju. Pokusajte kasnije.",
+    "RECAPTCHA_FAILED": "reCAPTCHA verifikacija nije uspela. Pokusajte ponovo."
   },
   "LANDING": {
     "BADGE": "BROJ 1 TERETANA U GRADU",
@@ -193,7 +199,14 @@
     "SELECT_PROGRAM": "Izaberi program",
     "AMOUNT_RSD": "Iznos (RSD)",
     "CREATED": "Clanarina kreirana",
+    "UPDATED": "Clanarina izmenjena",
+    "DELETED": "Clanarina obrisana",
     "CREATE_FAILED": "Kreiranje nije uspelo",
+    "UPDATE_FAILED": "Izmena nije uspela",
+    "DELETE_FAILED": "Brisanje nije uspelo",
+    "ACTIONS": "Akcije",
+    "EDIT": "Izmeni",
+    "DELETE_Q": "Obrisati clanarinu \"{{name}}\"?",
     "ACTIVE": "AKTIVNA",
     "EXPIRED": "ISTEKLA"
   },
@@ -212,7 +225,31 @@
     "NO_DATA": "Nema podataka",
     "NAME": "Ime",
     "EMAIL": "Email",
-    "ROLE": "Uloga"
+    "ROLE": "Uloga",
+    "TAB_STATS": "Statistika",
+    "TAB_PENDING": "Zahtevi za registraciju",
+    "TAB_ACTIONS": "Brze akcije",
+    "TAB_REPORTS": "Izvestaji",
+    "PENDING_REQUESTS": "Zahtevi za registraciju na cekanju",
+    "REGISTERED_AT": "Datum zahteva",
+    "APPROVE": "Odobri",
+    "REJECT": "Odbij",
+    "NO_PENDING": "Nema zahteva na cekanju",
+    "CONFIRM_APPROVE_HEADER": "Potvrda odobrenja",
+    "CONFIRM_APPROVE": "Odobriti korisnika {{name}}?",
+    "CONFIRM_REJECT_HEADER": "Potvrda odbijanja",
+    "CONFIRM_REJECT": "Odbiti korisnika {{name}}?",
+    "USER_APPROVED": "Korisnik {{name}} je odobren",
+    "USER_REJECTED": "Korisnik {{name}} je odbijen",
+    "APPROVE_FAILED": "Odobrenje nije uspelo",
+    "REJECT_FAILED": "Odbijanje nije uspelo",
+    "EXPIRING_TITLE": "Uskoro ističe",
+    "EXPIRING_CLANARINA": "Članarina",
+    "EXPIRING_PROGRAM": "Program",
+    "EXPIRING_TODAY": "ističe danas",
+    "EXPIRING_TOMORROW": "ističe sutra",
+    "EXPIRING_DAYS": "ističe za {{days}} dana",
+    "NO_EXPIRING": "Nema članarina ili programa koji ističu u naredna 3 dana"
   },
   "PROFILE": {
     "TITLE": "MOJ PROFIL",
@@ -253,6 +290,44 @@
     "LOAD_FAILED": "Ucitavanje zaposlenih nije uspelo",
     "ROLES_LOAD_FAILED": "Ucitavanje rola nije uspelo",
     "TAG": "Zaposleni",
-    "EMPTY": "Nema registrovanih zaposlenih"
+    "EMPTY": "Nema registrovanih zaposlenih",
+    "ADMIN_ONLY": "Samo administratori mogu dodavati nove zaposlene"
+  },
+  "UPLATE": {
+    "TITLE": "Uplate",
+    "CREATED": "Uplata je uspesno kreirana",
+    "CREATE_FAILED": "Kreiranje uplate nije uspelo",
+    "UPDATED": "Uplata je izmenjena",
+    "UPDATE_FAILED": "Izmena uplate nije uspela",
+    "DELETED": "Uplata je obrisana",
+    "DELETE_FAILED": "Brisanje uplate nije uspelo",
+    "AMOUNT": "Iznos",
+    "DATE": "Datum uplate",
+    "METHOD": "Nacin placanja",
+    "STATUS": "Status"
+  },
+  "QR": {
+    "PAGE_TITLE": "QR Kodovi",
+    "ENTRY_QR": "Ulaz",
+    "EXIT_QR": "Izlaz",
+    "ENTRY_DESC": "Skeniraj ovaj QR kod na ulazu u teretanu",
+    "EXIT_DESC": "Skeniraj ovaj QR kod na izlazu iz teretane",
+    "DOWNLOAD_ENTRY": "Preuzmi ulazni QR",
+    "DOWNLOAD_EXIT": "Preuzmi izlazni QR",
+    "RECENT_SCANS": "Poslednja skeniranja",
+    "NO_SCANS": "Nema skeniranja",
+    "SCAN_TIME": "Vreme skeniranja",
+    "DIRECTION": "Pravac",
+    "USER": "Korisnik",
+    "NAV_LINK": "QR Kodovi"
+  },
+  "SCAN": {
+    "CHECK_IN": "Prijava",
+    "CHECK_OUT": "Odjava",
+    "CHECK_IN_SUCCESS": "{{name}} je prijavljen u teretanu",
+    "CHECK_OUT_SUCCESS": "{{name}} je odjavljen iz teretane",
+    "CHECK_IN_FAILED": "Prijava za {{name}} nije uspela",
+    "CHECK_OUT_FAILED": "Odjava za {{name}} nije uspela",
+    "IN_GYM": "U teretani"
   }
 }

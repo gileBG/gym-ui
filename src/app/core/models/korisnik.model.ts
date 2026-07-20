@@ -4,4 +4,8 @@ export interface Korisnik {
   prezime: string;
   email: string;
   rola: string;
+  avatarUrl?: string | null;
+  approved?: boolean;
+  rejected?: boolean;
+  datumRegistracije?: string;
 }
